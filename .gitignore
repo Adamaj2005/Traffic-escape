@@ -1,0 +1,39 @@
+# Build Folders
+bin/
+obj/
+out/
+
+# Visual Studio files
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# NuGet packages
+*.nupkg
+packages/
+*.snupkg
+
+# Rider project files (optional if using Rider)
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# MAUI-specific
+*.db
+*.apk
+*.aab
+*.ipa
+*.app
+*.xcodeproj/
+*.xcworkspace/
+*.xcuserstate
+*.plist
+*.pdb
