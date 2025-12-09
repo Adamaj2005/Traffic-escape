@@ -1,90 +1,91 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
+<!-- Traffic Escape Main Page UI Layout -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CROSSPLATFORMPROJECT.MainPage"
-             BackgroundColor="#2C3E50">
+             BackgroundColor="#1B2B3A">
 
     <Grid>
+
         <!-- Game Canvas -->
         <GraphicsView x:Name="GameCanvas"
-                      HeightRequest="800"
-                      WidthRequest="400" />
+                      VerticalOptions="FillAndExpand"
+                      HorizontalOptions="FillAndExpand"/>
 
-        <!-- UI Overlay -->
-        <VerticalStackLayout VerticalOptions="Start"
-                             HorizontalOptions="Center"
-                             Margin="0,40,0,0"
-                             Spacing="5">
-            <Label x:Name="ScoreLabel"
-                   Text="Score: 0"
-                   FontSize="32"
-                   FontAttributes="Bold"
-                   TextColor="White"
-                   HorizontalOptions="Center" />
-            <Label x:Name="HighScoreLabel"
-                   Text="High Score: 0"
-                   FontSize="18"
-                   TextColor="LightGray"
-                   HorizontalOptions="Center" />
-        </VerticalStackLayout>
+        <!-- Score -->
+        <Label x:Name="ScoreLabel"
+               Text="Score: 0"
+               FontSize="28"
+               FontAttributes="Bold"
+               TextColor="White"
+               HorizontalOptions="Center"
+               VerticalOptions="Start"
+               Margin="0,20,0,0"
+               IsVisible="False"/>
 
-        <!-- Game Over Screen -->
-        <Grid x:Name="GameOverPanel"
-              IsVisible="False"
-              VerticalOptions="Center"
-              HorizontalOptions="Center"
-              BackgroundColor="#34495E"
-              Padding="30"
-              RowDefinitions="Auto,Auto,Auto"
-              RowSpacing="15">
-            <Label Text="Game Over!"
-                   FontSize="32"
-                   FontAttributes="Bold"
-                   TextColor="White"
-                   HorizontalOptions="Center"
-                   Grid.Row="0" />
-            <Label x:Name="FinalScoreLabel"
-                   Text="Score: 0"
-                   FontSize="24"
-                   TextColor="White"
-                   HorizontalOptions="Center"
-                   Grid.Row="1" />
-            <Button Text="Play Again"
-                    Clicked="OnRestartClicked"
-                    BackgroundColor="#3498DB"
-                    TextColor="White"
-                    CornerRadius="5"
-                    Padding="20,10"
-                    Grid.Row="2" />
-        </Grid>
-
-        <!-- Start Screen -->
+        <!-- Start Menu -->
         <Grid x:Name="StartPanel"
               VerticalOptions="Center"
               HorizontalOptions="Center"
-              BackgroundColor="#34495E"
-              Padding="30"
-              RowDefinitions="Auto,Auto,Auto"
-              RowSpacing="15">
-            <Label Text="Traffic Escape"
-                   FontSize="36"
-                   FontAttributes="Bold"
-                   TextColor="White"
-                   HorizontalOptions="Center"
-                   Grid.Row="0" />
-            <Label Text="Tap left/right to dodge traffic!"
-                   FontSize="16"
-                   TextColor="LightGray"
-                   HorizontalOptions="Center"
-                   Grid.Row="1" />
-            <Button Text="Start Game"
-                    Clicked="OnStartClicked"
-                    BackgroundColor="#27AE60"
-                    TextColor="White"
-                    CornerRadius="5"
-                    Padding="20,10"
-                    Grid.Row="2" />
-        </Grid>
-    </Grid>
+              Padding="20"
+              BackgroundColor="#22374A"
+              Opacity="0.95">
 
+            <VerticalStackLayout Spacing="20">
+
+                <Label Text="Traffic Escape"
+                       FontSize="36"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+
+                <Label Text="Tap left or right to dodge traffic!"
+                       FontSize="16"
+                       TextColor="LightGray"
+                       HorizontalOptions="Center"/>
+
+                <Button Text="Start Game"
+                        Clicked="OnStartClicked"
+                        FontSize="20"
+                        BackgroundColor="#28A745"
+                        TextColor="White"
+                        CornerRadius="10"/>
+
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- Game Over -->
+        <Grid x:Name="GameOverPanel"
+              VerticalOptions="Center"
+              HorizontalOptions="Center"
+              Padding="20"
+              BackgroundColor="#22374A"
+              Opacity="0.95"
+              IsVisible="False">
+
+            <VerticalStackLayout Spacing="20">
+
+                <Label Text="Game Over!"
+                       FontSize="32"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+
+                <Label x:Name="FinalScoreLabel"
+                       Text="Score: 0"
+                       FontSize="20"
+                       TextColor="White"
+                       HorizontalOptions="Center"/>
+
+                <Button Text="Play Again"
+                        Clicked="OnRestartClicked"
+                        FontSize="20"
+                        BackgroundColor="#007BFF"
+                        TextColor="White"
+                        CornerRadius="10"/>
+
+            </VerticalStackLayout>
+        </Grid>
+
+    </Grid>
 </ContentPage>
