@@ -1,18 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<!-- Traffic Escape Main Page UI Layout -->
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="CROSSPLATFORMPROJECT.MainPage"
-             BackgroundColor="#1B2B3A">
+             BackgroundColor="Black">
 
     <Grid>
 
-        <!-- Game Canvas -->
         <GraphicsView x:Name="GameCanvas"
                       VerticalOptions="FillAndExpand"
                       HorizontalOptions="FillAndExpand"/>
 
-        <!-- Score -->
         <Label x:Name="ScoreLabel"
                Text="Score: 0"
                FontSize="28"
@@ -32,25 +29,17 @@
               Opacity="0.95">
 
             <VerticalStackLayout Spacing="20">
-
                 <Label Text="Traffic Escape"
                        FontSize="36"
                        FontAttributes="Bold"
-                       TextColor="White"
-                       HorizontalOptions="Center"/>
-
-                <Label Text="Tap left or right to dodge traffic!"
-                       FontSize="16"
-                       TextColor="LightGray"
-                       HorizontalOptions="Center"/>
+                       TextColor="White"/>
 
                 <Button Text="Start Game"
-                        Clicked="OnStartClicked"
                         FontSize="20"
                         BackgroundColor="#28A745"
                         TextColor="White"
-                        CornerRadius="10"/>
-
+                        CornerRadius="10"
+                        Clicked="OnStartClicked"/>
             </VerticalStackLayout>
         </Grid>
 
@@ -64,7 +53,6 @@
               IsVisible="False">
 
             <VerticalStackLayout Spacing="20">
-
                 <Label Text="Game Over!"
                        FontSize="32"
                        FontAttributes="Bold"
@@ -78,12 +66,11 @@
                        HorizontalOptions="Center"/>
 
                 <Button Text="Play Again"
-                        Clicked="OnRestartClicked"
                         FontSize="20"
                         BackgroundColor="#007BFF"
                         TextColor="White"
-                        CornerRadius="10"/>
-
+                        CornerRadius="10"
+                        Clicked="OnRestartClicked"/>
             </VerticalStackLayout>
         </Grid>
 

@@ -1,97 +1,182 @@
-﻿using Microsoft.Maui.Controls;
-using Microsoft.Maui.Graphics;
+﻿using Microsoft.Maui.Graphics;
+using Microsoft.Maui.Dispatching;
 using System;
+using Microsoft.Maui.Graphics.Platform;
 
 namespace CROSSPLATFORMPROJECT
 {
-    public partial class MainPage : ContentPage
+    public partial class MainPage : ContentPage, IDrawable
     {
-        float backgroundY = 0;
+        DrawingRoad road = new();
+        int lanes = 4;
+        int playerLane = 1;
+        int enemyLane = 2;
+        float enemyY = -200;
+        float roadSpeed = 6f;
+        float enemySpeed = 10f;
         int score = 0;
-        GameDrawer drawer;
+        Random rnd = new();
         IDispatcherTimer timer;
+
+        // Car images - use full namespace to avoid ambiguity
+        Microsoft.Maui.Graphics.IImage sportsCarImage;
+        Microsoft.Maui.Graphics.IImage taxiImage;
+        Microsoft.Maui.Graphics.IImage truckImage;
+        Microsoft.Maui.Graphics.IImage policeCarImage;
+        Microsoft.Maui.Graphics.IImage currentEnemyImage;
+        bool imagesLoaded = false;
 
         public MainPage()
         {
             InitializeComponent();
+            GameCanvas.Drawable = this;
+            GameCanvas.StartInteraction += OnTap;
 
-            drawer = new GameDrawer();
-            GameCanvas.Drawable = drawer;
-
-            GameCanvas.StartInteraction += HandleTouch;
+            // Load car images
+            LoadCarImages();
 
             timer = Dispatcher.CreateTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(20);
+            timer.Interval = TimeSpan.FromMilliseconds(16);
             timer.Tick += GameLoop;
         }
 
-        private void GameLoop(object? sender, EventArgs e)
+        private async void LoadCarImages()
         {
-            backgroundY += 5f;
-            if (backgroundY > GameCanvas.Height)
-                backgroundY = 0f;
+            try
+            {
+                // Load player car
+                var sportsStream = await FileSystem.OpenAppPackageFileAsync("sportscar.png");
+                sportsCarImage = PlatformImage.FromStream(sportsStream);
 
-            score++;
-            ScoreLabel.Text = "Score: " + score;
+                // Load enemy cars
+                var taxiStream = await FileSystem.OpenAppPackageFileAsync("taxi.png");
+                taxiImage = PlatformImage.FromStream(taxiStream);
 
+                var truckStream = await FileSystem.OpenAppPackageFileAsync("truck.png");
+                truckImage = PlatformImage.FromStream(truckStream);
+
+                var policeStream = await FileSystem.OpenAppPackageFileAsync("policecar.png");
+                policeCarImage = PlatformImage.FromStream(policeStream);
+
+                // Set initial enemy car randomly
+                PickRandomEnemyCar();
+
+                imagesLoaded = true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error loading images: {ex.Message}");
+                imagesLoaded = false;
+            }
+        }
+
+        private void PickRandomEnemyCar()
+        {
+            int carType = rnd.Next(0, 3);
+            currentEnemyImage = carType switch
+            {
+                0 => taxiImage,
+                1 => truckImage,
+                2 => policeCarImage,
+                _ => taxiImage
+            };
+        }
+
+        private void OnTap(object s, TouchEventArgs e)
+        {
+            float x = (float)e.Touches[0].X;
+            float laneWidth = (float)GameCanvas.Width / lanes;
+            playerLane = (int)(x / laneWidth);
+        }
+
+        private void GameLoop(object sender, EventArgs e)
+        {
+            road.Update(roadSpeed);
+            enemyY += enemySpeed;
+
+            if (enemyY > GameCanvas.Height)
+            {
+                enemyY = -200;
+                enemyLane = rnd.Next(0, lanes);
+                PickRandomEnemyCar(); // Pick a new random enemy car
+                score++;
+                ScoreLabel.Text = $"Score: {score}";
+            }
+
+            CheckCollision();
             GameCanvas.Invalidate();
         }
 
-        private void HandleTouch(object? sender, TouchEventArgs e)
+        private void CheckCollision()
         {
-            float laneWidth = (float)(GameCanvas.Width / 3);
-            float touchX = (float)e.Touches[0].X;
-
-            if (touchX < laneWidth)
-                drawer.carLane = Math.Max(0, drawer.carLane - 1);
-            else if (touchX > laneWidth * 2)
-                drawer.carLane = Math.Min(2, drawer.carLane + 1);
+            if (playerLane == enemyLane &&
+                enemyY > GameCanvas.Height - 250 &&
+                enemyY < GameCanvas.Height - 100)
+            {
+                timer.Stop();
+                ScoreLabel.IsVisible = false;
+                GameOverPanel.IsVisible = true;
+                FinalScoreLabel.Text = $"Score: {score}";
+            }
         }
 
-        private void OnStartClicked(object? sender, EventArgs e)
+        private void ResetGame()
         {
+            score = 0;
+            enemyY = -200;
+            playerLane = 1;
+            PickRandomEnemyCar();
+            ScoreLabel.Text = "Score: 0";
+        }
+
+        private void OnStartClicked(object s, EventArgs e)
+        {
+            ResetGame();
             StartPanel.IsVisible = false;
-            ScoreLabel.IsVisible = true;
-            timer.Start();
-        }
-
-        private void OnRestartClicked(object? sender, EventArgs e) // FIXED SIGNATURE
-        {
             GameOverPanel.IsVisible = false;
             ScoreLabel.IsVisible = true;
-            score = 0;
-            drawer.carLane = 1;
-            backgroundY = 0;
             timer.Start();
         }
-    }
 
-    public class GameDrawer : IDrawable
-    {
-        public int carLane = 1;
+        private void OnRestartClicked(object s, EventArgs e)
+        {
+            ResetGame();
+            GameOverPanel.IsVisible = false;
+            ScoreLabel.IsVisible = true;
+            timer.Start();
+        }
 
         public void Draw(ICanvas canvas, RectF rect)
         {
-            float laneWidth = rect.Width / 3f;
+            float laneWidth = rect.Width / lanes;
+            road.Draw(canvas, rect);
 
-            // Road background
-            canvas.FillColor = Colors.Gray;
-            canvas.FillRectangle(0, 0, rect.Width, rect.Height);
+            // Player car (sports car)
+            float px = playerLane * laneWidth + laneWidth / 2 - 40;
+            float py = rect.Height - 150;
 
-            // Lane lines
-            canvas.FillColor = Colors.White;
-            for (float i = 0; i < rect.Height; i += 100)
+            if (imagesLoaded && sportsCarImage != null)
             {
-                canvas.FillRectangle(laneWidth - 5, i, 10, 50);
-                canvas.FillRectangle(laneWidth * 2 - 5, i, 10, 50);
+                canvas.DrawImage(sportsCarImage, px, py, 80, 120);
+            }
+            else
+            {
+                canvas.FillColor = Colors.Red;
+                canvas.FillRectangle(px, py, 80, 120);
             }
 
-            // Car rectangle (placeholder)
-            float carX = (carLane * laneWidth) + (laneWidth / 2f) - 40f;
-            float carY = rect.Height - 150f;
+            // Enemy car (taxi, truck, or police car)
+            float ex = enemyLane * laneWidth + laneWidth / 2 - 40;
 
-            canvas.FillColor = Colors.Red;
-            canvas.FillRectangle(carX, carY, 80, 120);
+            if (imagesLoaded && currentEnemyImage != null)
+            {
+                canvas.DrawImage(currentEnemyImage, ex, enemyY, 80, 120);
+            }
+            else
+            {
+                canvas.FillColor = Colors.Purple;
+                canvas.FillRectangle(ex, enemyY, 80, 120);
+            }
         }
     }
 }
