@@ -1,182 +1,112 @@
-﻿using Microsoft.Maui.Graphics;
-using Microsoft.Maui.Dispatching;
-using System;
-using Microsoft.Maui.Graphics.Platform;
+﻿using Microsoft.Maui.Dispatching;
 
-namespace CROSSPLATFORMPROJECT
+namespace CROSSPLATFORMPROJECT;
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage, IDrawable
+    DrawingRoad road = new();
+
+    int lanes = 4;
+    int playerLane = 1;
+    int enemyLane = 2;
+
+    float enemyY = -200;
+    float enemySpeed = 10f;
+    float roadSpeed = 6f;
+
+    int score = 0;
+    Random rnd = new();
+    IDispatcherTimer timer;
+
+    public MainPage()
     {
-        DrawingRoad road = new();
-        int lanes = 4;
-        int playerLane = 1;
-        int enemyLane = 2;
-        float enemyY = -200;
-        float roadSpeed = 6f;
-        float enemySpeed = 10f;
-        int score = 0;
-        Random rnd = new();
-        IDispatcherTimer timer;
+        InitializeComponent();
 
-        // Car images - use full namespace to avoid ambiguity
-        Microsoft.Maui.Graphics.IImage sportsCarImage;
-        Microsoft.Maui.Graphics.IImage taxiImage;
-        Microsoft.Maui.Graphics.IImage truckImage;
-        Microsoft.Maui.Graphics.IImage policeCarImage;
-        Microsoft.Maui.Graphics.IImage currentEnemyImage;
-        bool imagesLoaded = false;
+        RoadView.Drawable = road;
 
-        public MainPage()
+        EnemyCar.Source = PickRandomEnemyCar();
+
+        timer = Dispatcher.CreateTimer();
+        timer.Interval = TimeSpan.FromMilliseconds(16);
+        timer.Tick += GameLoop;
+        timer.Start();
+
+        RoadView.StartInteraction += OnTap;
+    }
+
+    void GameLoop(object sender, EventArgs e)
+    {
+        road.Update(roadSpeed);
+        RoadView.Invalidate();
+
+        enemyY += enemySpeed;
+
+        if (enemyY > Height)
         {
-            InitializeComponent();
-            GameCanvas.Drawable = this;
-            GameCanvas.StartInteraction += OnTap;
-
-            // Load car images
-            LoadCarImages();
-
-            timer = Dispatcher.CreateTimer();
-            timer.Interval = TimeSpan.FromMilliseconds(16);
-            timer.Tick += GameLoop;
-        }
-
-        private async void LoadCarImages()
-        {
-            try
-            {
-                // Load player car
-                var sportsStream = await FileSystem.OpenAppPackageFileAsync("sportscar.png");
-                sportsCarImage = PlatformImage.FromStream(sportsStream);
-
-                // Load enemy cars
-                var taxiStream = await FileSystem.OpenAppPackageFileAsync("taxi.png");
-                taxiImage = PlatformImage.FromStream(taxiStream);
-
-                var truckStream = await FileSystem.OpenAppPackageFileAsync("truck.png");
-                truckImage = PlatformImage.FromStream(truckStream);
-
-                var policeStream = await FileSystem.OpenAppPackageFileAsync("policecar.png");
-                policeCarImage = PlatformImage.FromStream(policeStream);
-
-                // Set initial enemy car randomly
-                PickRandomEnemyCar();
-
-                imagesLoaded = true;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error loading images: {ex.Message}");
-                imagesLoaded = false;
-            }
-        }
-
-        private void PickRandomEnemyCar()
-        {
-            int carType = rnd.Next(0, 3);
-            currentEnemyImage = carType switch
-            {
-                0 => taxiImage,
-                1 => truckImage,
-                2 => policeCarImage,
-                _ => taxiImage
-            };
-        }
-
-        private void OnTap(object s, TouchEventArgs e)
-        {
-            float x = (float)e.Touches[0].X;
-            float laneWidth = (float)GameCanvas.Width / lanes;
-            playerLane = (int)(x / laneWidth);
-        }
-
-        private void GameLoop(object sender, EventArgs e)
-        {
-            road.Update(roadSpeed);
-            enemyY += enemySpeed;
-
-            if (enemyY > GameCanvas.Height)
-            {
-                enemyY = -200;
-                enemyLane = rnd.Next(0, lanes);
-                PickRandomEnemyCar(); // Pick a new random enemy car
-                score++;
-                ScoreLabel.Text = $"Score: {score}";
-            }
-
-            CheckCollision();
-            GameCanvas.Invalidate();
-        }
-
-        private void CheckCollision()
-        {
-            if (playerLane == enemyLane &&
-                enemyY > GameCanvas.Height - 250 &&
-                enemyY < GameCanvas.Height - 100)
-            {
-                timer.Stop();
-                ScoreLabel.IsVisible = false;
-                GameOverPanel.IsVisible = true;
-                FinalScoreLabel.Text = $"Score: {score}";
-            }
-        }
-
-        private void ResetGame()
-        {
-            score = 0;
             enemyY = -200;
-            playerLane = 1;
-            PickRandomEnemyCar();
-            ScoreLabel.Text = "Score: 0";
+            enemyLane = rnd.Next(0, lanes);
+            EnemyCar.Source = PickRandomEnemyCar();
+            score++;
+            ScoreLabel.Text = $"Score: {score}";
         }
 
-        private void OnStartClicked(object s, EventArgs e)
+        UpdatePositions();
+        CheckCollision();
+    }
+
+    void UpdatePositions()
+    {
+        double laneWidth = Width / lanes;
+
+        double px = playerLane * laneWidth + laneWidth / 2 - 40;
+        double py = Height - 150;
+
+        double ex = enemyLane * laneWidth + laneWidth / 2 - 40;
+
+        AbsoluteLayout.SetLayoutBounds(PlayerCar, new Rect(px, py, 80, 120));
+        AbsoluteLayout.SetLayoutBounds(EnemyCar, new Rect(ex, enemyY, 80, 120));
+    }
+
+    void OnTap(object sender, TouchEventArgs e)
+    {
+        double laneWidth = Width / lanes;
+        playerLane = (int)(e.Touches[0].X / laneWidth);
+    }
+
+    void CheckCollision()
+    {
+        if (playerLane == enemyLane &&
+            enemyY > Height - 250 &&
+            enemyY < Height - 100)
         {
-            ResetGame();
-            StartPanel.IsVisible = false;
-            GameOverPanel.IsVisible = false;
-            ScoreLabel.IsVisible = true;
-            timer.Start();
+            timer.Stop();
+
+            
+            RestartButton.IsVisible = true;
         }
+    }
 
-        private void OnRestartClicked(object s, EventArgs e)
-        {
-            ResetGame();
-            GameOverPanel.IsVisible = false;
-            ScoreLabel.IsVisible = true;
-            timer.Start();
-        }
+    void OnRestartClicked(object sender, EventArgs e)
+    {
+        RestartButton.IsVisible = false;
 
-        public void Draw(ICanvas canvas, RectF rect)
-        {
-            float laneWidth = rect.Width / lanes;
-            road.Draw(canvas, rect);
+        score = 0;
+        enemyY = -200;
+        playerLane = 1;
+        enemyLane = rnd.Next(0, lanes);
 
-            // Player car (sports car)
-            float px = playerLane * laneWidth + laneWidth / 2 - 40;
-            float py = rect.Height - 150;
+        ScoreLabel.Text = "Score: 0";
+        EnemyCar.Source = PickRandomEnemyCar();
 
-            if (imagesLoaded && sportsCarImage != null)
-            {
-                canvas.DrawImage(sportsCarImage, px, py, 80, 120);
-            }
-            else
-            {
-                canvas.FillColor = Colors.Red;
-                canvas.FillRectangle(px, py, 80, 120);
-            }
+        timer.Start();
+    }
 
-            // Enemy car (taxi, truck, or police car)
-            float ex = enemyLane * laneWidth + laneWidth / 2 - 40;
+    string PickRandomEnemyCar()
+    {
+        int r = rnd.Next(0, 3);
 
-            if (imagesLoaded && currentEnemyImage != null)
-            {
-                canvas.DrawImage(currentEnemyImage, ex, enemyY, 80, 120);
-            }
-            else
-            {
-                canvas.FillColor = Colors.Purple;
-                canvas.FillRectangle(ex, enemyY, 80, 120);
-            }
-        }
+        if (r == 0) return "taxi.png";
+        if (r == 1) return "truck.png";
+        return "policecar.png";
     }
 }
