@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="CROSSPLATFORMPROJECT.SettingsPage"
+    BackgroundColor="Black">
+
+    <VerticalStackLayout
+        VerticalOptions="Center"
+        HorizontalOptions="Center"
+        Spacing="20">
+
+        <Label
+            Text="Settings"
+            FontSize="32"
+            TextColor="White" />
+
+        <Label
+            Text="Game speed increases automatically."
+            TextColor="White" />
+
+        <Button
+            Text="Back"
+            Clicked="OnBackClicked" />
+
+    </VerticalStackLayout>
+</ContentPage>

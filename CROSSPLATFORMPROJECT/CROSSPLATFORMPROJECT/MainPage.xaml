@@ -1,78 +1,47 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="CROSSPLATFORMPROJECT.MainPage"
-             BackgroundColor="Black">
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="CROSSPLATFORMPROJECT.MainPage"
+    BackgroundColor="Black">
 
-    <Grid>
+    <AbsoluteLayout>
 
-        <GraphicsView x:Name="GameCanvas"
-                      VerticalOptions="FillAndExpand"
-                      HorizontalOptions="FillAndExpand"/>
+        <!-- Road -->
+        <GraphicsView x:Name="RoadView"
+                      AbsoluteLayout.LayoutBounds="0,0,1,1"
+                      AbsoluteLayout.LayoutFlags="All" />
 
+        <!-- Player Car -->
+        <Image x:Name="PlayerCar"
+               Source="sportscar.png"
+               AbsoluteLayout.LayoutBounds="0,0,80,120" />
+
+        <!-- Enemy Car -->
+        <Image x:Name="EnemyCar"
+               AbsoluteLayout.LayoutBounds="0,0,80,120" />
+
+        <!-- Star Pickup -->
+        <Image x:Name="Star"
+               Source="star.png"
+               IsVisible="False"
+               AbsoluteLayout.LayoutBounds="0,0,40,40" />
+
+        <!-- Score -->
         <Label x:Name="ScoreLabel"
                Text="Score: 0"
-               FontSize="28"
-               FontAttributes="Bold"
+               FontSize="26"
                TextColor="White"
-               HorizontalOptions="Center"
-               VerticalOptions="Start"
-               Margin="0,20,0,0"
-               IsVisible="False"/>
+               AbsoluteLayout.LayoutBounds="0.5,0.05,-1,-1"
+               AbsoluteLayout.LayoutFlags="PositionProportional" />
 
-        <!-- Start Menu -->
-        <Grid x:Name="StartPanel"
-              VerticalOptions="Center"
-              HorizontalOptions="Center"
-              Padding="20"
-              BackgroundColor="#22374A"
-              Opacity="0.95">
+        <!-- Stars -->
+        <Label x:Name="StarsLabel"
+               Text="Stars: 0"
+               FontSize="20"
+               TextColor="White"
+               AbsoluteLayout.LayoutBounds="0.5,0.10,-1,-1"
+               AbsoluteLayout.LayoutFlags="PositionProportional" />
 
-            <VerticalStackLayout Spacing="20">
-                <Label Text="Traffic Escape"
-                       FontSize="36"
-                       FontAttributes="Bold"
-                       TextColor="White"/>
-
-                <Button Text="Start Game"
-                        FontSize="20"
-                        BackgroundColor="#28A745"
-                        TextColor="White"
-                        CornerRadius="10"
-                        Clicked="OnStartClicked"/>
-            </VerticalStackLayout>
-        </Grid>
-
-        <!-- Game Over -->
-        <Grid x:Name="GameOverPanel"
-              VerticalOptions="Center"
-              HorizontalOptions="Center"
-              Padding="20"
-              BackgroundColor="#22374A"
-              Opacity="0.95"
-              IsVisible="False">
-
-            <VerticalStackLayout Spacing="20">
-                <Label Text="Game Over!"
-                       FontSize="32"
-                       FontAttributes="Bold"
-                       TextColor="White"
-                       HorizontalOptions="Center"/>
-
-                <Label x:Name="FinalScoreLabel"
-                       Text="Score: 0"
-                       FontSize="20"
-                       TextColor="White"
-                       HorizontalOptions="Center"/>
-
-                <Button Text="Play Again"
-                        FontSize="20"
-                        BackgroundColor="#007BFF"
-                        TextColor="White"
-                        CornerRadius="10"
-                        Clicked="OnRestartClicked"/>
-            </VerticalStackLayout>
-        </Grid>
-
-    </Grid>
+    </AbsoluteLayout>
 </ContentPage>
