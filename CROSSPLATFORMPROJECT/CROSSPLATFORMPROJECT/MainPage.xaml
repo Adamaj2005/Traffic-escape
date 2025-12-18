@@ -15,7 +15,8 @@
         <!-- Player Car -->
         <Image x:Name="PlayerCar"
                Source="sportscar.png"
-               AbsoluteLayout.LayoutBounds="0,0,80,120" />
+               ScaleY="-1"
+               AbsoluteLayout.LayoutBounds="0,0,160,120" />
 
         <!-- Enemy Car -->
         <Image x:Name="EnemyCar"
@@ -34,6 +35,15 @@
                TextColor="White"
                AbsoluteLayout.LayoutBounds="0.5,0.05,-1,-1"
                AbsoluteLayout.LayoutFlags="PositionProportional" />
+
+       <!--  HighScore -->
+        <Label x:Name="HighScoreLabel"
+               Text="High Score: 0"
+               FontSize="18"
+               TextColor="White"
+               AbsoluteLayout.LayoutBounds="0.05,0.10,-1,-1"
+               AbsoluteLayout.LayoutFlags="PositionProportional" />
+
 
         <!-- Stars -->
         <Label x:Name="StarsLabel"

@@ -16,6 +16,13 @@
             TextColor="White"
             HorizontalOptions="Center" />
 
+        <Label
+            x:Name="HighScoreLabel"
+            Text="High Score: 0"
+            FontSize="20"
+            TextColor="White"
+            HorizontalOptions="Center" />
+
         <Button
             Text="Start Game"
             FontSize="20"

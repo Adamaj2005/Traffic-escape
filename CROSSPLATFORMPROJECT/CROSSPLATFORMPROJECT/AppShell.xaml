@@ -7,7 +7,12 @@
 
     <!-- App starts here -->
     <ShellContent
-        Title="Menu"
+        Title="Main Menu"
         ContentTemplate="{DataTemplate local:MainMenuPage}" />
+
+
+    <ShellContent
+        Route="MainPage"
+        ContentTemplate="{DataTemplate local:MainPage}" />
 
 </Shell>

@@ -1,4 +1,5 @@
 ﻿using Microsoft.Maui.Dispatching;
+using Microsoft.Maui.Storage;
 
 namespace CROSSPLATFORMPROJECT;
 
@@ -6,7 +7,10 @@ public partial class MainPage : ContentPage
 {
     DrawingRoad road = new();
 
-    int lanes = 4;
+    const int lanes = 4;
+    const double CarWidth = 80;
+    const double CarHeight = 120;
+
     int playerLane = 1;
     int enemyLane = 2;
 
@@ -15,12 +19,14 @@ public partial class MainPage : ContentPage
     float roadSpeed = 6f;
 
     int score = 0;
-
-    // Star variables
     int stars = 0;
+    int highScore = 0;
+
     bool starActive = false;
     float starY = -200;
     int starLane = 0;
+
+    bool gameOver = false;
 
     Random rnd = new();
     IDispatcherTimer timer;
@@ -28,6 +34,9 @@ public partial class MainPage : ContentPage
     public MainPage()
     {
         InitializeComponent();
+
+        highScore = Preferences.Get("HighScore", 0);
+        HighScoreLabel.Text = $"High Score: {highScore}";
 
         RoadView.Drawable = road;
         EnemyCar.Source = PickRandomEnemyCar();
@@ -44,12 +53,13 @@ public partial class MainPage : ContentPage
 
     void GameLoop(object sender, EventArgs e)
     {
+        if (gameOver) return;
+
         road.Update(roadSpeed);
         RoadView.Invalidate();
 
         enemyY += enemySpeed;
 
-        // Enemy reset
         if (enemyY > Height)
         {
             enemyY = -200;
@@ -58,15 +68,19 @@ public partial class MainPage : ContentPage
 
             score++;
             ScoreLabel.Text = $"Score: {score}";
+
+            if (score % 5 == 0)
+            {
+                enemySpeed += 0.5f;
+                roadSpeed += 0.3f;
+            }
         }
 
-        // Spawn star (not in enemy lane)
         if (!starActive && rnd.Next(0, 200) == 1)
         {
             starActive = true;
             starY = -100;
 
-            // Make sure star is not in enemy lane
             do
             {
                 starLane = rnd.Next(0, lanes);
@@ -76,7 +90,6 @@ public partial class MainPage : ContentPage
             Star.IsVisible = true;
         }
 
-        // Move star
         if (starActive)
         {
             starY += enemySpeed;
@@ -98,15 +111,13 @@ public partial class MainPage : ContentPage
 
         double laneWidth = Width / lanes;
 
-        double px = playerLane * laneWidth + laneWidth / 2 - 40;
-        double py = Height - 160;
+        double px = playerLane * laneWidth + laneWidth / 2 - CarWidth / 2;
+        double py = Height - CarHeight - 40;
+        double ex = enemyLane * laneWidth + laneWidth / 2 - CarWidth / 2;
 
-        double ex = enemyLane * laneWidth + laneWidth / 2 - 40;
+        AbsoluteLayout.SetLayoutBounds(PlayerCar, new Rect(px, py, CarWidth, CarHeight));
+        AbsoluteLayout.SetLayoutBounds(EnemyCar, new Rect(ex, enemyY, CarWidth, CarHeight));
 
-        AbsoluteLayout.SetLayoutBounds(PlayerCar, new Rect(px, py, 80, 120));
-        AbsoluteLayout.SetLayoutBounds(EnemyCar, new Rect(ex, enemyY, 80, 120));
-
-        // Star position
         if (starActive)
         {
             double sx = starLane * laneWidth + laneWidth / 2 - 20;
@@ -121,36 +132,73 @@ public partial class MainPage : ContentPage
         double x = tap.GetPosition(this)?.X ?? 0;
 
         playerLane = (int)(x / laneWidth);
+        playerLane = Math.Clamp(playerLane, 0, lanes - 1);
     }
 
     void CheckCollision()
     {
-        // Crash
-        if (playerLane == enemyLane &&
+        if (!gameOver &&
+            playerLane == enemyLane &&
             enemyY > Height - 260 &&
             enemyY < Height - 120)
         {
+            gameOver = true;
             timer.Stop();
-        }
 
-        // Star pickup
-        if (starActive &&
-            playerLane == starLane &&
-            starY > Height - 260 &&
-            starY < Height - 120)
+            if (score > highScore)
+            {
+                highScore = score;
+                Preferences.Set("HighScore", highScore);
+                HighScoreLabel.Text = $"High Score: {highScore}";
+            }
+
+            ShowGameOverOptions();
+        }
+    }
+
+    async void ShowGameOverOptions()
+    {
+        bool restart = await DisplayAlert(
+            "Game Over",
+            $"Score: {score}",
+            "Restart",
+            "Main Menu");
+
+        if (restart)
         {
-            starActive = false;
-            Star.IsVisible = false;
-
-            stars++;
-            StarsLabel.Text = $"Stars: {stars}";
+            ResetGame();
         }
+        else
+        {
+            await Shell.Current.GoToAsync(nameof(MainMenuPage));
+        }
+    }
+
+    void ResetGame()
+    {
+        score = 0;
+        stars = 0;
+        enemySpeed = 10f;
+        roadSpeed = 6f;
+
+        ScoreLabel.Text = "Score: 0";
+        StarsLabel.Text = "Stars: 0";
+
+        enemyY = -200;
+        enemyLane = rnd.Next(0, lanes);
+
+        starActive = false;
+        Star.IsVisible = false;
+
+        playerLane = lanes / 2;
+
+        gameOver = false;
+        timer.Start();
     }
 
     string PickRandomEnemyCar()
     {
         int r = rnd.Next(0, 3);
-
         if (r == 0) return "taxi.png";
         if (r == 1) return "truck.png";
         return "policecar.png";

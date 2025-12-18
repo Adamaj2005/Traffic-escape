@@ -13,14 +13,22 @@
         <Label
             Text="Settings"
             FontSize="32"
-            TextColor="White" />
+            TextColor="White"
+            HorizontalOptions="Center" />
 
         <Label
             Text="Game speed increases automatically."
-            TextColor="White" />
+            TextColor="White"
+            HorizontalOptions="Center" />
+
+        <Button
+            Text="Reset High Score"
+            FontSize="20"
+            Clicked="OnResetHighScoreClicked" />
 
         <Button
             Text="Back"
+            FontSize="20"
             Clicked="OnBackClicked" />
 
     </VerticalStackLayout>
