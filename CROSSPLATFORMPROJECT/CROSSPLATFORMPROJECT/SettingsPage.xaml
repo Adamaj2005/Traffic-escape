@@ -5,30 +5,38 @@
     x:Class="CROSSPLATFORMPROJECT.SettingsPage"
     BackgroundColor="Black">
 
+    <!-- Centered layout for settings -->
     <VerticalStackLayout
         VerticalOptions="Center"
         HorizontalOptions="Center"
         Spacing="20">
 
+        <!-- Page title -->
         <Label
             Text="Settings"
             FontSize="32"
+            TextColor="White" />
+
+        <!-- Sound toggle label -->
+        <Label
+            Text="Sound On / Off"
             TextColor="White"
             HorizontalOptions="Center" />
 
+        <!-- Sound toggle switch -->
+        <Switch
+            x:Name="SoundSwitch"
+            Toggled="OnSoundToggled" />
+
+        <!-- Information text -->
         <Label
             Text="Game speed increases automatically."
             TextColor="White"
             HorizontalOptions="Center" />
 
-        <Button
-            Text="Reset High Score"
-            FontSize="20"
-            Clicked="OnResetHighScoreClicked" />
-
+        <!-- Back button -->
         <Button
             Text="Back"
-            FontSize="20"
             Clicked="OnBackClicked" />
 
     </VerticalStackLayout>

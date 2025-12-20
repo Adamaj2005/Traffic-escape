@@ -9,16 +9,13 @@ public partial class SettingsPage : ContentPage
         InitializeComponent();
     }
 
-    async void OnResetHighScoreClicked(object sender, EventArgs e)
+    // Reset the saved high score back to zero
+    void OnResetHighScoreClicked(object sender, EventArgs e)
     {
         Preferences.Set("HighScore", 0);
-
-        await DisplayAlert(
-            "High Score Reset",
-            "Your high score has been reset to 0.",
-            "OK");
     }
 
+    // Return to the previous page
     async void OnBackClicked(object sender, EventArgs e)
     {
         await Shell.Current.GoToAsync("..");

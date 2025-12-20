@@ -7,51 +7,72 @@
 
     <AbsoluteLayout>
 
-        <!-- Road -->
-        <GraphicsView x:Name="RoadView"
-                      AbsoluteLayout.LayoutBounds="0,0,1,1"
-                      AbsoluteLayout.LayoutFlags="All" />
+        <!-- Road background -->
+        <GraphicsView
+            x:Name="RoadView"
+            AbsoluteLayout.LayoutBounds="0,0,1,1"
+            AbsoluteLayout.LayoutFlags="All" />
 
-        <!-- Player Car -->
-        <Image x:Name="PlayerCar"
-               Source="sportscar.png"
-               ScaleY="-1"
-               AbsoluteLayout.LayoutBounds="0,0,160,120" />
+        <!-- Player car -->
+        <Image
+            x:Name="PlayerCar"
+            Source="sportscar.png"
+            AbsoluteLayout.LayoutBounds="0,0,160,120" />
 
-        <!-- Enemy Car -->
-        <Image x:Name="EnemyCar"
-               AbsoluteLayout.LayoutBounds="0,0,80,120" />
+        <!-- Enemy car -->
+        <Image
+            x:Name="EnemyCar"
+            AbsoluteLayout.LayoutBounds="0,0,80,120" />
 
-        <!-- Star Pickup -->
-        <Image x:Name="Star"
-               Source="star.png"
-               IsVisible="False"
-               AbsoluteLayout.LayoutBounds="0,0,40,40" />
+        <!-- Star pickup -->
+        <Image
+            x:Name="Star"
+            Source="star.png"
+            IsVisible="False"
+            AbsoluteLayout.LayoutBounds="0,0,40,40" />
 
-        <!-- Score -->
-        <Label x:Name="ScoreLabel"
-               Text="Score: 0"
-               FontSize="26"
-               TextColor="White"
-               AbsoluteLayout.LayoutBounds="0.5,0.05,-1,-1"
-               AbsoluteLayout.LayoutFlags="PositionProportional" />
+        <!-- Shield pickup -->
+        <Image
+            x:Name="Shield"
+            Source="shield.png"
+            IsVisible="False"
+            AbsoluteLayout.LayoutBounds="0,0,40,40" />
 
-       <!--  HighScore -->
-        <Label x:Name="HighScoreLabel"
-               Text="High Score: 0"
-               FontSize="18"
-               TextColor="White"
-               AbsoluteLayout.LayoutBounds="0.05,0.10,-1,-1"
-               AbsoluteLayout.LayoutFlags="PositionProportional" />
+        <!-- Score display -->
+        <Label
+            x:Name="ScoreLabel"
+            Text="Score: 0"
+            FontSize="26"
+            TextColor="White"
+            AbsoluteLayout.LayoutBounds="0.5,0.05,-1,-1"
+            AbsoluteLayout.LayoutFlags="PositionProportional" />
 
+        <!-- Stars display -->
+        <Label
+            x:Name="StarsLabel"
+            Text="Stars: 0"
+            FontSize="20"
+            TextColor="White"
+            AbsoluteLayout.LayoutBounds="0.5,0.10,-1,-1"
+            AbsoluteLayout.LayoutFlags="PositionProportional" />
 
-        <!-- Stars -->
-        <Label x:Name="StarsLabel"
-               Text="Stars: 0"
-               FontSize="20"
-               TextColor="White"
-               AbsoluteLayout.LayoutBounds="0.5,0.10,-1,-1"
-               AbsoluteLayout.LayoutFlags="PositionProportional" />
+        <!-- High score display -->
+        <Label
+            x:Name="HighScoreLabel"
+            Text="High Score: 0"
+            FontSize="18"
+            TextColor="White"
+            AbsoluteLayout.LayoutBounds="0.05,0.05,-1,-1"
+            AbsoluteLayout.LayoutFlags="PositionProportional" />
+
+        <!-- Shield timer -->
+        <Label
+            x:Name="ShieldTimerLabel"
+            Text=""
+            FontSize="18"
+            TextColor="LightBlue"
+            AbsoluteLayout.LayoutBounds="0.05,0.20,-1,-1"
+            AbsoluteLayout.LayoutFlags="PositionProportional" />
 
     </AbsoluteLayout>
 </ContentPage>

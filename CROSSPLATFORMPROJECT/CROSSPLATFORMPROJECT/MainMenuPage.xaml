@@ -5,17 +5,20 @@
     x:Class="CROSSPLATFORMPROJECT.MainMenuPage"
     BackgroundColor="Black">
 
+    <!-- Centered layout for menu -->
     <VerticalStackLayout
         VerticalOptions="Center"
         HorizontalOptions="Center"
         Spacing="25">
 
+        <!-- Game title -->
         <Label
             Text="Traffic Escape"
             FontSize="36"
             TextColor="White"
             HorizontalOptions="Center" />
 
+        <!-- High score display -->
         <Label
             x:Name="HighScoreLabel"
             Text="High Score: 0"
@@ -23,11 +26,21 @@
             TextColor="White"
             HorizontalOptions="Center" />
 
+        <!-- Total stars display -->
+        <Label
+            x:Name="TotalStarsLabel"
+            Text="Total Stars: 0"
+            FontSize="20"
+            TextColor="White"
+            HorizontalOptions="Center" />
+
+        <!-- Start game button -->
         <Button
             Text="Start Game"
             FontSize="20"
             Clicked="OnStartGameClicked" />
 
+        <!-- Settings button -->
         <Button
             Text="Settings"
             FontSize="20"
